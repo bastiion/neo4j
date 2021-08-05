@@ -8,6 +8,7 @@
     let
       pkgs = nixpkgs.legacyPackages.${system};
       jre = pkgs.openjdk11;
+      varHome = "/var/lib/neo4j";
       neo4j = (pkgs.stdenv.mkDerivation rec {
         pname = "neo4j";
         version = "4.3.2";
@@ -44,11 +45,14 @@
                   --set JAVA_HOME "${jre}"
           done
 
-          data_home=/home/voidee/.local/share/neo4j
+          rm -rf $out/share/neo4j/{run,logs,data}
+          for var_dir in run logs data; do
+              substituteInPlace "$out/share/neo4j/conf/neo4j.conf" \
+                --replace "#dbms.directories.$var_dir=$var_dir" \
+                "dbms.directories.$var_dir=${varHome}/$var_dir"
+          done
+
           substituteInPlace "$out/share/neo4j/conf/neo4j.conf" \
-            --replace '#dbms.directories.logs=logs' "dbms.directories.logs=$data_home/logs" \
-            --replace '#dbms.directories.run=run' "dbms.directories.run=$data_home/run" \
-            --replace '#dbms.directories.data=data' "dbms.directories.data=$data_home/data" \
             --replace '#dbms.security.auth_enabled=false' 'dbms.security.auth_enabled=false'
 
           runHook postInstall
