@@ -52,7 +52,7 @@
             done
 
             substituteInPlace "$out/share/neo4j/conf/neo4j.conf" \
-              --replace '#dbms.security.auth_enabled=false' 'dbms.security.auth_enabled=true'
+              --replace '#dbms.security.auth_enabled=false' 'dbms.security.auth_enabled=false'
 
             runHook postInstall
           '';
