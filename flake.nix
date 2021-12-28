@@ -8,17 +8,16 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        jre = pkgs.openjdk11;
+        jre = pkgs.openjdk8;
         varHome = "/var/lib/neo4j";
         neo4j = (pkgs.stdenv.mkDerivation rec {
           pname = "neo4j";
-          version = "4.3.2";
+          version = "3.5.22";
 
           src = pkgs.fetchurl {
             url =
               "https://neo4j.com/artifact.php?name=neo4j-community-${version}-unix.tar.gz";
-            sha256 =
-              "3474f3ec9da57fb627af71652ae6ecbd036e6ea689379f09e77e4cd8ba4b5515";
+            sha256 = "sha256-+h2Ix7VgzEBZgyNhjQAsvfoRkdOruKqDkpph46LvZCw=";
           };
 
           nativeBuildInputs = [ pkgs.makeWrapper pkgs.bashInteractive ];
@@ -53,7 +52,7 @@
             done
 
             substituteInPlace "$out/share/neo4j/conf/neo4j.conf" \
-              --replace '#dbms.security.auth_enabled=false' 'dbms.security.auth_enabled=false'
+              --replace '#dbms.security.auth_enabled=false' 'dbms.security.auth_enabled=true'
 
             runHook postInstall
           '';
